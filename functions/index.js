@@ -24,7 +24,7 @@ admin.initializeApp({
   databaseURL: "https://sherbetapp-66fc8.firebaseio.com"
 });
 
-app.get("/getGonderi", (req, res) => {
+app.get("/getGonderiler", (req, res) => {
   admin
     .firestore()
     .collection("gonderiler")
@@ -57,11 +57,11 @@ app.post("/addGonderi",(req, res) => {
     .firestore()
     .collection("gonderiler")
     .add(yeniGonderi)
-    .then(doc => {
+    .then((doc) => {
       res.json({ message: "document başarılı" });
     })
-    .catch(err => {
-      res.status(500).json(yeniGonderi);
+    .catch((err) => {
+      res.status(500).json("Hata aldı");
       console.error(err);
     });
 });
