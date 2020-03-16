@@ -1,12 +1,8 @@
 const functions = require("firebase-functions");
-
-var admin = require("firebase-admin");
-
 const express = require("express");
-const app = express();
+const firebase = require("firebase");
 
-admin.initializeApp({
-  credential: admin.credential.cert({
+const adminConfig ={
     type: "service_account",
     project_id: "sherbetapp-66fc8",
     private_key_id: "141e4012505292dc6e48d4d9fa94461f48279eaf",
@@ -20,13 +16,38 @@ admin.initializeApp({
     auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
     client_x509_cert_url:
       "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-g7cit%40sherbetapp-66fc8.iam.gserviceaccount.com"
-  }),
+  };
+
+
+
+var admin = require("firebase-admin");
+admin.initializeApp({
+  credential: admin.credential.cert(adminConfig),
   databaseURL: "https://sherbetapp-66fc8.firebaseio.com"
-});
+  });
+
+const configFirebase = {
+    apiKey: "AIzaSyCMJHGxIvTQrRXBCCim1pDBIxOO1FMGND8",
+    authDomain: "sherbetapp-66fc8.firebaseapp.com",
+    databaseURL: "https://sherbetapp-66fc8.firebaseio.com",
+    projectId: "sherbetapp-66fc8",
+    storageBucket: "sherbetapp-66fc8.appspot.com",
+    messagingSenderId: "1063208203174",
+    appId: "1:1063208203174:web:d17e79015bc64075769567",
+    measurementId: "G-P6PQRTJHTH"
+  };
+
+
+firebase.initializeApp(configFirebase);
+
+const db = admin.firestore();
+const app = express();
+
+
+
 
 app.get("/getGonderiler", (req, res) => {
-  admin
-    .firestore()
+  db
     .collection("gonderiler")
     .orderBy('createdAt','desc')
     .get()
@@ -53,8 +74,7 @@ app.post("/addGonderi",(req, res) => {
     createdAt: new Date().toISOString()
   };
   var docID = "";
-  admin
-    .firestore()
+  db
     .collection("gonderiler")
     .add(yeniGonderi)
     .then((doc) => {
@@ -66,4 +86,49 @@ app.post("/addGonderi",(req, res) => {
     });
 });
 
-exports.service = functions.https.onRequest(app);
+//signup route
+let token,userId;
+
+app.post('/signup',(req,res)=>{
+  const newUser = {
+    email : req.body.email,
+    password : req.body.password,
+    confirmPassword : req.body.confirmPassword,
+    handle : req.body.handle
+  };
+  db.doc('/users/${newUser.handle}').get()
+  .then((doc)=>{
+    if (doc.exists) {
+      return res.status(400).json({handle: "mevcutta var olan bir kullanıcı"})
+    }else {
+     return firebase.auth().createUserWithEmailAndPassword(newUser.email, newUser.password);
+    }
+  }).then(data=>{
+    userId = data.user.uid;
+    return data.user.getIdToken();
+  })
+  .then(idToken=>{
+    token = idToken
+    const userCredentials = {
+      handle : newUser.handle,
+      email:newUser.email,
+      createdAt:new Date().toISOString(),
+      userId
+    };
+    return db.doc('/users/${newUser.handle}').set(userCredentials);
+  }).then(()=>{
+    return res.status(201).json({token});
+  })
+  .catch(err=>{
+    console.log(err);
+    if (err.code === 'auth/email-already-in-use') {
+      return res.status(400).json({email:'Email kullanımda.'})
+    }else {
+    return res.status(500).json({error:err.code});  
+    }
+    
+  })
+
+})
+
+exports.service = functions.region('europe-west1').https.onRequest(app);
