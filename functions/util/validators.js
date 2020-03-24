@@ -8,9 +8,9 @@ const isEmail = email => {
   else return false;
 };
 
-exports.validateSignupData = (data) =>{
-    
-    let errors = {};
+exports.validateSignupData = (data) => {
+
+  let errors = {};
 
   if (isEmpty(data.email)) {
     errors.email = "Email adresi boş olamaz!";
@@ -24,22 +24,22 @@ exports.validateSignupData = (data) =>{
   if (isEmpty(data.handle)) errors.handle = "Boş bırakılamaz.";
 
 
-  return{
-      errors,
-      valid : Object.keys(errors).length === 0 ? true : false
+  return {
+    errors,
+    valid: Object.keys(errors).length === 0 ? true : false
   }
-  }
+}
 
-  exports.validateLoginData = (data) =>{
-      let errors = {};
+exports.validateLoginData = (data) => {
+  let errors = {};
 
-  if (isEmpty(user.email)) {
+  if (isEmpty(data.email)) {
     errors.email = "Lütfen boş bırakmayınız!";
-  } else if (!isEmail(user.email)) {
+  } else if (!isEmail(data.email)) {
     errors.email = "Geçerli bir email girişi yapınız.";
   }
   if (isEmpty(user.password)) errors.password = "Lütfen boş bırakmayınız!";
 
   if (Object.keys(errors).length > 0) return res.status(400).json(errors);
 
-  }
+}
