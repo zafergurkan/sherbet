@@ -2,9 +2,14 @@ const { admin, db } = require("../util/admin");
 
 const firebase = require("firebase");
 const configFirebase = require("../util/config");
+
 firebase.initializeApp(configFirebase);
 
-const { validateSignupData, validateLoginData } = require("../util/validators");
+const {
+  validateSignupData,
+  validateLoginData,
+  reduceUserDetails
+} = require("../util/validators");
 
 exports.signUp = (req, res) => {
   const newUser = {
@@ -92,6 +97,48 @@ exports.login = (req, res) => {
     });
 };
 
+exports.getAuthenicatedUser = (req, res) => {
+  let userData = {};
+
+  db.doc("/users/" + req.user.handle)
+    .get()
+    .then(doc => {
+      if (doc.exists) {
+        userData.credentials = doc.data();
+        return db
+          .collection("likes")
+          .where("userHandle", "==", req.user.handle)
+          .get();
+      }
+    })
+    .then(data => {
+      userData.likes = [];
+      data.forEach(doc => {
+        userData.likes.push(doc.data());
+      });
+      return res.json(userData);
+    })
+    .catch(err => {
+      console.log(err);
+      return res.status(500).json({ err: err.code });
+    });
+};
+//Kullanıcı Detayları Ekle
+
+exports.addUserDetails = (req, res) => {
+  let userDetails = reduceUserDetails(req.body);
+
+  db.doc("/users/" + req.user.handle)
+    .update(userDetails)
+    .then(() => {
+      return res.json({ message: "Detaylar eklendi." });
+    })
+    .catch(err => {
+      console.log(err);
+      return res.status(500).json({ err: err.code });
+    });
+};
+
 exports.uploadImage = (req, res) => {
   const BusBoy = require("busboy");
   const path = require("path");
@@ -104,16 +151,14 @@ exports.uploadImage = (req, res) => {
   const busboy = new BusBoy({ headers: req.headers });
 
   busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
-    console.log(fieldname);
-    console.log(filename);
-    console.log(mimetype);
+    if (mimetype !== "image/jpeg" && mimetype !== "image/png") {
+      return res.status(400).json({ error: "Hatalı dosya uzantısı" });
+    }
 
     const imageExtension = filename.split(".")[filename.split(".").length - 1];
-    console.log(imageExtension);
     imageFileName = `${Math.round(
       Math.random() * 100000000000
     )}.${imageExtension}`;
-    console.log(imageFileName);
     const filepath = path.join(os.tmpdir(), imageFileName);
 
     imageToBeUpload = { filepath, mimetype };
@@ -135,14 +180,12 @@ exports.uploadImage = (req, res) => {
       })
       .then(() => {
         const imageUrl = `https://firebasestorage.googleapis.com/v0/b/${configFirebase.storageBucket}/o/${imageFileName}?alt=media`;
-        console.log(imageUrl);        
         return db.doc(`/users/${req.user.handle}`).update({ imageUrl });
       })
       .then(() => {
         return res.json({ message: "Image uploaded succesfully" });
       })
       .catch(err => {
-        console.error(err);
         return res.status(500).json({ error: err.code });
       });
   });
