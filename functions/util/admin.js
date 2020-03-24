@@ -18,7 +18,8 @@ var admin = require("firebase-admin");
 
 admin.initializeApp({
   credential: admin.credential.cert(adminConfig),
-  databaseURL: "https://sherbetapp-66fc8.firebaseio.com"
+  databaseURL: "https://sherbetapp-66fc8.firebaseio.com",
+  storageBucket: "sherbetapp-66fc8.appspot.com"
 });
 
 const db = admin.firestore();

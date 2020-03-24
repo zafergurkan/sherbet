@@ -38,7 +38,7 @@ exports.validateLoginData = (data) => {
   } else if (!isEmail(data.email)) {
     errors.email = "Geçerli bir email girişi yapınız.";
   }
-  if (isEmpty(user.password)) errors.password = "Lütfen boş bırakmayınız!";
+  if (isEmpty(data.password)) errors.password = "Lütfen boş bırakmayınız!";
 
   if (Object.keys(errors).length > 0) return res.status(400).json(errors);
 
