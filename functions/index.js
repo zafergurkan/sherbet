@@ -4,7 +4,7 @@ const firebase = require("firebase");
 
 const FBAuth = require("./util/fbAuth");
 
-const { getGonderiler, addOneGonderi ,getGonderi ,commentOnScream} = require("./handlers/gonderiler");
+const { getGonderiler, addOneGonderi ,getGonderi ,commentOnScream,likeScream,unLikeScream,deleteScream} = require("./handlers/gonderiler");
 const {
   signUp,
   login,
@@ -20,10 +20,11 @@ app.get("/getGonderiler", getGonderiler);
 app.post("/addGonderi", FBAuth, addOneGonderi);
 app.get("/addgonderi/:screamId", getGonderi)
 
-//TODO:delete scream
-//TODO:like a scream
-//TODO:unlike  a scream
+app.delete("/addgonderi/:screamId",FBAuth,deleteScream)
 app.post("/addgonderi/:screamId/yorumlar", FBAuth,commentOnScream)
+app.get("/addgonderi/:screamId/like", FBAuth,likeScream)
+app.get("/addgonderi/:screamId/unlike", FBAuth,unLikeScream)
+
 
 
 //users route
