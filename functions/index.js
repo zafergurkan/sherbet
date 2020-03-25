@@ -4,19 +4,27 @@ const firebase = require("firebase");
 
 const FBAuth = require("./util/fbAuth");
 
-const { getGonderiler, addOneGonderi } = require("./handlers/gonderiler");
+const { getGonderiler, addOneGonderi ,getGonderi ,commentOnScream} = require("./handlers/gonderiler");
 const {
   signUp,
   login,
   uploadImage,
   addUserDetails,
-  getAuthenicatedUser
+  getAuthenicatedUser,
+  
 } = require("./handlers/users");
 
 const app = express();
 //gonderi routes
 app.get("/getGonderiler", getGonderiler);
 app.post("/addGonderi", FBAuth, addOneGonderi);
+app.get("/addgonderi/:screamId", getGonderi)
+
+//TODO:delete scream
+//TODO:like a scream
+//TODO:unlike  a scream
+app.post("/addgonderi/:screamId/yorumlar", FBAuth,commentOnScream)
+
 
 //users route
 app.post("/signup", signUp);
