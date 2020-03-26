@@ -116,7 +116,25 @@ exports.getAuthenicatedUser = (req, res) => {
       data.forEach(doc => {
         userData.likes.push(doc.data());
       });
-      return res.json(userData);
+      return db.collection('notifications').where('recipient', '==', req.user.handle)
+      .orderBy('createdAt','desc').limit(10).get();
+    })
+    .then(data=>{
+      userData.notifications = [];
+      console.log("data111"+ data);
+      
+      data.forEach(doc => {
+        userData.notifications.push({
+            createdAt: doc.data().createdAt ,
+            recipient: doc.data().recipient,
+            sender: doc.data().sender ,
+            type: doc.data().type ,
+            read: doc.data().read ,
+            notificationId : doc.id,
+            screamId: doc.data().screamId
+        });
+        return res.json(userData);
+      });
     })
     .catch(err => {
       console.log(err);
@@ -138,6 +156,40 @@ exports.addUserDetails = (req, res) => {
       return res.status(500).json({ err: err.code });
     });
 };
+
+exports.getUserDetails = (req,res) =>{
+  let userData = {};
+  db.doc('/users/'+req.params.handle)
+  .get()
+  .then(doc=>{
+    if(doc.exists){
+      userData.user = doc.data();
+      return db.collection('gonderiler').where('userHandle','==',req.params.handle)
+      .orderBy('createdAt','desc').get();
+    }else {
+      return res.status(404).json({error : "User not found"})
+    }
+  })
+  .then((data) => {
+   userData.gonderiler = [];
+   data.forEach(doc => {
+     userData.gonderiler.push({
+       body : doc.data().body,
+       createdAt : doc.data().createdAt,
+       userHandle : doc.data().userHandle,
+       userImage : doc.data().userImage,
+       likeCount : doc.data().likeCount,
+       commentCount : doc.data().commentCount,
+       screamId : doc.id
+     });
+     return res.json(userData);
+   }); 
+  })
+  .catch((err) => {
+   console.log(err);
+    return res.status(500).json({error : err.code})
+  });
+}
 
 exports.uploadImage = (req, res) => {
   const BusBoy = require("busboy");
@@ -191,3 +243,21 @@ exports.uploadImage = (req, res) => {
   });
   busboy.end(req.rawBody);
 };
+
+
+exports.markNotificationsRead = (req,res)=>{
+  let batch = db.batch();
+
+  req.body.forEach(notificationId=>{
+    const notification = db.doc('/notifications/'+notificationId);
+    batch.update(notification,{read:true});
+  });
+  batch.commit()
+  .then(()=>{
+    return res.json({message : "Notifications okundu."})
+  })
+  .catch(err=>{
+    console.error(err);
+    return res.status(500).json({error : err.code});  
+  })
+}
