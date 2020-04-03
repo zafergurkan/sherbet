@@ -63,7 +63,7 @@ exports.signUp = (req, res) => {
       if (err.code === "auth/email-already-in-use") {
         return res.status(400).json({ email: "Email kullanımda." });
       } else {
-        return res.status(500).json({ error: err.code });
+        return res.status(500).json({ general : 'Bazı hatalar var. Tekrar Deneyiniz.' });
       }
     });
 };
@@ -89,11 +89,10 @@ exports.login = (req, res) => {
     })
     .catch(err => {
       console.log(err);
-      if (err.code === "auth/user-not-found") {
+     
         return res
           .status(403)
           .json({ Genel: "Hatalı kullanıcı bilgileri. Kontrol ediniz." });
-      } else return res.status(500).json({ error: err.code });
     });
 };
 
