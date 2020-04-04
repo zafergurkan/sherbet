@@ -77,7 +77,7 @@ exports.deleteNotificationOnLike = functions
         });
   });
 
-exports.createNotificationOnComment = functions
+exports.createNotificationOnComment = functions.
   .region("europe-west1")
   .firestore.document("comments/{id}")
   .onCreate(snapshot => {
