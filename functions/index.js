@@ -78,7 +78,7 @@ exports.deleteNotificationOnLike = functions
   });
 
 exports.createNotificationOnComment = functions.
-  .region("europe-west1")
+  region("europe-west1")
   .firestore.document("comments/{id}")
   .onCreate(snapshot => {
    return db.doc("/gonderiler/" + snapshot.data().screamId)

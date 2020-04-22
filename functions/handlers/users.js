@@ -92,7 +92,7 @@ exports.login = (req, res) => {
      
         return res
           .status(403)
-          .json({ Genel: "Hatalı kullanıcı bilgileri. Kontrol ediniz." });
+          .json({ general: "Hatalı kullanıcı bilgileri. Kontrol ediniz." });
     });
 };
 
