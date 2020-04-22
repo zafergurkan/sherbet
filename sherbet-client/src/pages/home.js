@@ -11,15 +11,17 @@ class home extends Component {
         .then(res =>{
        
             this.setState({
-                screams:res.data
+                screams:res.data,
+                
             })
+            
         })
         .catch(err=>console.log(err));
     }
 
     render() {
         let recentScreamsMarkup = this.state.screams ? (
-            this.state.screams.map((scream) => <Scream key={scream.screamId} scream = {scream}/>)
+            this.state.screams.map((scream) =>  <Scream key={scream.gonderiId} scream = {scream}/>)
         ) : <p>Yükleniyor....</p>
         return (
         <Grid container spacing={10}>
