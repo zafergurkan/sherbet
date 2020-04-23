@@ -9,6 +9,11 @@ import themeFile from './util/theme';
 import Navbar from "./components/Navbar";
 import AuthRoute from "./util/AuthRoute";
 
+//REDUX
+import {Provider} from 'react-redux';
+import store from './redux/store';
+
+
 //pages
 
 import home from "./pages/home";
@@ -28,8 +33,6 @@ const decodedToken = jwtDecode(token);
   if(decodedToken.exp*1000<Date.now()){
       window.location.href=  '/login'
       authenticated=false;
-
-
   }
   else{
     authenticated=true;
@@ -40,20 +43,20 @@ const decodedToken = jwtDecode(token);
 class App extends Component {
   render(){
       return (
-          <MuiThemeProvider theme={theme}>
-            <div className="App">
-            <Router>
-              <Navbar />
-              <div className="container">
-                <Switch>
-                  <AuthRoute exact path="/" component={home}  />
-                  <AuthRoute exact path="/login" component={login}  authenticated={authenticated}/>
-                  <AuthRoute exact path="/signup" component={signup} authenticated={authenticated}/>
-                </Switch>
-              </div>
-            </Router>
-          </div>
-          </MuiThemeProvider>
+        <MuiThemeProvider theme={theme}>
+                <Provider store={store}>
+                  <Router>
+                    <Navbar />
+                    <div className="container">
+                      <Switch>
+                        <Route exact path="/" component={home} />
+                        <AuthRoute exact path="/login" component={login} authenticated={authenticated}/>
+                        <AuthRoute exact path="/signup" component={signup} authenticated={authenticated}/>
+                      </Switch>
+                    </div>
+                  </Router>
+                </Provider>
+              </MuiThemeProvider>
         );
   }
   

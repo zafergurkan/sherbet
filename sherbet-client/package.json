@@ -7,10 +7,15 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "dayjs": "^1.8.25",
+    "jwt-decode": "^2.2.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -26,7 +31,6 @@
     "not dead",
     "not ie<=11",
     "not op_mini all"
-  ],    
-  "proxy" : "https://europe-west1-sherbetapp-66fc8.cloudfunctions.net/service"
-  
+  ],
+  "proxy": "https://europe-west1-sherbetapp-66fc8.cloudfunctions.net/service"
 }
