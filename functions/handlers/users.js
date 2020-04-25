@@ -98,36 +98,47 @@ exports.login = (req, res) => {
 
 exports.getAuthenicatedUser = (req, res) => {
   let userData = {};
-
-  db.doc("/users/" + req.user.handle)
+  db.doc(`/users/${req.user.handle}`)
     .get()
-    .then(doc=>{
-      if(doc.exists){
+    .then((doc) => {
+      if (doc.exists) {
         userData.credentials = doc.data();
-        return db.collection('gonderiler').where('userHandle','==',req.user.handle)
-        .orderBy('createdAt','desc').get();
-      }else {
-        return res.status(404).json({error : "User not found"})
+        return db
+          .collection("likes")
+          .where("userHandle", "==", req.user.handle)
+          .get();
       }
     })
-    .then(data=>{
-      userData.notifications = [];
-      data.forEach(doc => {
-        userData.notifications.push({
-            createdAt: doc.data().createdAt ,
-            recipient: doc.data().recipient,
-            sender: doc.data().sender ,
-            type: doc.data().type ,
-            read: doc.data().read ,
-            notificationId : doc.id,
-            screamId: doc.data().screamId
-        });
-        return res.json(userData);
+    .then((data) => {
+      userData.likes = [];
+      data.forEach((doc) => {
+        userData.likes.push(doc.data());
       });
+      return db
+        .collection("notifications")
+        .where("recipient", "==", req.user.handle)
+        .orderBy("createdAt", "desc")
+        .limit(10)
+        .get();
     })
-    .catch(err => {
-      console.log(err);
-      return res.status(500).json({ err: err.code });
+    .then((data) => {
+      userData.notifications = [];
+      data.forEach((doc) => {
+        userData.notifications.push({
+          recipient: doc.data().recipient,
+          sender: doc.data().sender,
+          createdAt: doc.data().createdAt,
+          screamId: doc.data().screamId,
+          type: doc.data().type,
+          read: doc.data().read,
+          notificationId: doc.id,
+        });
+      });
+      return res.json(userData);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
     });
 };
 //Kullanıcı Detayları Ekle
