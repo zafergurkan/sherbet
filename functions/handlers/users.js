@@ -101,27 +101,17 @@ exports.getAuthenicatedUser = (req, res) => {
 
   db.doc("/users/" + req.user.handle)
     .get()
-    .then(doc => {
-      if (doc.exists) {
+    .then(doc=>{
+      if(doc.exists){
         userData.credentials = doc.data();
-        return db
-          .collection("likes")
-          .where("userHandle", "==", req.user.handle)
-          .get();
+        return db.collection('gonderiler').where('userHandle','==',req.user.handle)
+        .orderBy('createdAt','desc').get();
+      }else {
+        return res.status(404).json({error : "User not found"})
       }
-    })
-    .then(data => {
-      userData.likes = [];
-      data.forEach(doc => {
-        userData.likes.push(doc.data());
-      });
-      return db.collection('notifications').where('recipient', '==', req.user.handle)
-      .orderBy('createdAt','desc').limit(10).get();
     })
     .then(data=>{
       userData.notifications = [];
-      console.log("data111"+ data);
-      
       data.forEach(doc => {
         userData.notifications.push({
             createdAt: doc.data().createdAt ,

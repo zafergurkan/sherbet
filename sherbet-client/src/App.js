@@ -24,7 +24,8 @@ import signup from "./pages/signup";
 import axios from "axios";
 
 const theme = createMuiTheme(themeFile);
-
+axios.defaults.baseURL =
+  'https://europe-west1-sherbetapp-66fc8.cloudfunctions.net/service';
 
 const token =localStorage.FBIdToken;
 
