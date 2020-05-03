@@ -4,6 +4,11 @@ const firebase = require("firebase");
 const { db } = require("./util/admin");
 const FBAuth = require("./util/fbAuth");
 
+const app = express();
+
+const cors = require('cors');
+app.use(cors());
+
 const {
   getGonderiler,
   addOneGonderi,
@@ -23,7 +28,6 @@ const {
   markNotificationsRead
 } = require("./handlers/users");
 
-const app = express();
 //gonderi routes
 app.get("/getGonderiler", getGonderiler);
 app.post("/addGonderi", FBAuth, addOneGonderi);
