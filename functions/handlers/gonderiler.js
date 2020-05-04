@@ -8,7 +8,7 @@ exports.getGonderiler = (req, res) => {
       let gonderiler = [];
       data.forEach(doc => {
         gonderiler.push({
-          gonderiId: doc.id,
+          screamId: doc.id,
           body: doc.data().body,
           userHandle: doc.data().userHandle,
           createdAt: doc.data().createdAt,

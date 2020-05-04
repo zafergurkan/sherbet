@@ -4,27 +4,22 @@ import axios from 'axios';
 
 import Scream from '../components/Scream'
 import Profile from '../components/Profile'
+import PropTypes from  'prop-types';
+
+
+import {connect} from 'react-redux';
+import {getScreams} from '../redux/actions/dataActions';
 class home extends Component {
-    state = {
-        screams:null
-    }
+
     componentDidMount(){
-        axios.get('/getGonderiler')
-        .then(res =>{
-       
-            this.setState({
-                screams:res.data,
-                
-            })
-            
-        })
-        .catch(err=>console.log(err));
+       this.props.getScreams();
     }
 
     render() {
-        let recentScreamsMarkup = this.state.screams ? (
-            this.state.screams.map((scream) =>  <Scream key={scream.gonderiId} scream = {scream}/>)
-        ) : <p>Yükleniyor....</p>
+        const {screams,loading} = this.props.data;
+        let recentScreamsMarkup = !loading ? (
+           screams.map((scream) =>  <Scream key={scream.screamId} scream = {scream}/>)
+        ) : (<p>Yükleniyor....</p>);
         return (
         <Grid container spacing={10}>
             <Grid item sm={8} xs={12}>
@@ -37,5 +32,17 @@ class home extends Component {
         )
     }
 }
+home.propTypes={
 
-export default home
+    getScreams:PropTypes.func.isRequired,
+    data:PropTypes.object.isRequired
+
+}
+
+const mapStateToProps = state => ({
+
+        data:state.data
+
+})
+
+export default connect( mapStateToProps,{getScreams})(home);
