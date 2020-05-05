@@ -3,6 +3,7 @@ import {
   LOADING_DATA,
   LIKE_SCREAM,
   UNLIKE_SCREAM,
+  DELETE_SCREAM,
 } from "../types";
 
 import axios from "axios";
@@ -26,29 +27,43 @@ export const getScreams = () => (dispatch) => {
 };
 
 //Like a scream
-export const likeScream = (screamId) => dispatch => {
+export const likeScream = (screamId) => (dispatch) => {
   console.log(screamId);
-    axios.get(`/addgonderi/${screamId}/like`)
-    .then(res =>{
+  axios
+    .get(`/addgonderi/${screamId}/like`)
+    .then((res) => {
       console.log(res);
-        dispatch({
-            type : LIKE_SCREAM,
-            payload : res.data
-        })
-    }).catch(err=>console.log(err));
-
-}
+      dispatch({
+        type: LIKE_SCREAM,
+        payload: res.data,
+      });
+    })
+    .catch((err) => console.log(err));
+};
 
 //unlike a scream
-export const unlikeScream = (screamId) => dispatch =>{
+export const unlikeScream = (screamId) => (dispatch) => {
   console.log(screamId);
-    axios.get(`/addgonderi/${screamId}/unlike`)
-    .then(res =>{
+  axios
+    .get(`/addgonderi/${screamId}/unlike`)
+    .then((res) => {
       console.log(res);
-        dispatch({
-            type : UNLIKE_SCREAM,
-            payload : res.data
-        })
-    }).catch(err=>console.log(err));
+      dispatch({
+        type: UNLIKE_SCREAM,
+        payload: res.data,
+      });
+    })
+    .catch((err) => console.log(err));
+};
 
-}
+export const deleteScream = (screamId) => (dispatch) => {
+  axios
+    .delete(`/addgonderi/${screamId}`)
+    .then(() => {
+      dispatch({
+        type: DELETE_SCREAM,
+        payload: screamId,
+      });
+    })
+    .catch((err) => console.log(err));
+};

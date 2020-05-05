@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import PropTypes from "prop-types";
 import MyButton from "../util/MyButton";
+import DeleteScream from "../components/DeleteScream";
 
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -40,16 +41,16 @@ const styles = {
 };
 
 class Scream extends Component {
-    likedScream = () => {
-        if (
-          this.props.user.likes &&
-          this.props.user.likes.find(
-            (like) => like.screamId === this.props.scream.screamId
-          )
-        )
-          return true;
-        else return false;
-      };
+  likedScream = () => {
+    if (
+      this.props.user.likes &&
+      this.props.user.likes.find(
+        (like) => like.screamId === this.props.scream.screamId
+      )
+    )
+      return true;
+    else return false;
+  };
   likeScream = () => {
     this.props.likeScream(this.props.scream.screamId);
   };
@@ -71,27 +72,26 @@ class Scream extends Component {
         likeCount,
         commentCount,
       },
-      user:{
-          authenticated
-      }
+      user: { authenticated,credentials:{handle} },
     } = this.props;
     const likeButton = !authenticated ? (
-        <MyButton tip = "Beğen">
-            <Link to="/login">
-                <FavoriteBorder color="primary"/>
-            </Link>
-        </MyButton>
+      <MyButton tip="Beğen">
+        <Link to="/login">
+          <FavoriteBorder color="primary" />
+        </Link>
+      </MyButton>
+    ) : this.likedScream() ? (
+      <MyButton tip="Beğenmekten Vazgeç" onClick={this.unlikeScream}>
+        <FavoriteIcon color="primary" />
+      </MyButton>
     ) : (
-        this.likedScream() ? (
-            <MyButton tip = "Beğenmekten Vazgeç" onClick={this.unlikeScream}>
-                <FavoriteIcon color="primary"/>
-            </MyButton>
-        ) : (
-            <MyButton tip = "Beğen" onClick={this.likeScream}>
-                <FavoriteBorder color="primary"/>
-            </MyButton>
-        )
+      <MyButton tip="Beğen" onClick={this.likeScream}>
+        <FavoriteBorder color="primary" />
+      </MyButton>
     );
+    const deleteButton = authenticated && userHandle === handle ? (
+      <DeleteScream screamId = {screamId}/>
+    ) : null
     return (
       <Card className={classes.card}>
         <Avatar
@@ -110,6 +110,7 @@ class Scream extends Component {
             {" "}
             {userHandle}
           </Typography>
+          {deleteButton}
           <Typography variant="body2" color="textSecondary">
             {" "}
             {dayjs(createdAt).fromNow()}
