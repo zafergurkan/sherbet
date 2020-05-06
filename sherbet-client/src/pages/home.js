@@ -17,7 +17,7 @@ class home extends Component {
       const {screams, loading} = this.props.data;
     let recentScreamsMarkup = !loading ? (
       screams.map((scream) => (
-        <Scream key={scream.gonderiId} scream={scream} />
+        <Scream key={scream.screamId} scream={scream} />
       ))
     ) : (
       <p>Yükleniyor....</p>
