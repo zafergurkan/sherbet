@@ -5,7 +5,8 @@ import {
   LOADING_DATA,
   DELETE_SCREAM,
   POST_SCREAM,
-  SET_SCREAM
+  SET_SCREAM,
+  SUBMIT_COMMENT,
 } from "../types";
 
 const initialState = {
@@ -30,9 +31,8 @@ export default function (state = initialState, action) {
     case SET_SCREAM:
       return {
         ...state,
-        scream:action.payload
-
-      }
+        scream: action.payload,
+      };
     case LIKE_SCREAM:
     case UNLIKE_SCREAM:
       let index = state.screams.findIndex(
@@ -49,20 +49,25 @@ export default function (state = initialState, action) {
       let index1 = state.screams.findIndex(
         (scream) => scream.screamId === action.payload
       );
-      console.log("splice önce : "+state.screams);
+      console.log("splice önce : " + state.screams);
       state.screams.splice(index1, 1);
-      console.log("splice sonra : "+state.screams);
+      console.log("splice sonra : " + state.screams);
       return {
         ...state,
       };
     case POST_SCREAM:
-      return{
+      return {
         ...state,
-        screams:[
-          action.payload,
-          ...state.screams
-        ]
-      }
+        screams: [action.payload, ...state.screams],
+      };
+    case SUBMIT_COMMENT:
+      return {
+        ...state,
+        scream: {
+          ...state.scream,
+          comments: [action.payload, ...state.scream.comments],
+        },
+      };
     default:
       return state;
   }

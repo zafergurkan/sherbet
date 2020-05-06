@@ -65,7 +65,7 @@ exports.getGonderi = (req, res) => {
       return db
         .collection("comments")
         .orderBy("createdAt", "desc")
-        .where("gonderilerId", "==", req.params.screamId)
+        .where("screamId", "==", req.params.screamId)
         .get();
     })
     .then(data => {
@@ -88,7 +88,7 @@ exports.getGonderi = (req, res) => {
 
 exports.commentOnScream = (req, res) => {
   if (req.body.body.trim() === "")
-    return res.status(400).json({ comment: "Must not be empty" });
+    return res.status(400).json({ comment: "Boş bırakılamaz" });
 
   const newComment = {
     body: req.body.body,
