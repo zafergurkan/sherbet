@@ -7,8 +7,8 @@ import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
+import PostScream from "./PostScream";
 
-import AddIcon from "@material-ui/icons/Add";
 import HomeIcon from "@material-ui/icons/Home";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 
@@ -22,9 +22,7 @@ class Navbar extends Component {
         <Toolbar className="nav-container">
           {authenticated ? (
             <Fragment>
-              <MyButton tip="Gönderi Oluştur">
-                <AddIcon color="primary" />
-              </MyButton>
+             <PostScream/>
               <Link to="/">
                 <MyButton tip="Anasayfa">
                   <HomeIcon color="primary" />
