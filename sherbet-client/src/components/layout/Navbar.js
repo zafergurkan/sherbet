@@ -10,7 +10,7 @@ import Button from "@material-ui/core/Button";
 import PostScream from "../scream/PostScream";
 
 import HomeIcon from "@material-ui/icons/Home";
-import NotificationsIcon from "@material-ui/icons/Notifications";
+import Notifications from "./Notifications";
 
 import MyButton from "../../util/MyButton";
 
@@ -28,9 +28,9 @@ class Navbar extends Component {
                   <HomeIcon color="primary" />
                 </MyButton>
               </Link>
-              <MyButton tip="Bildirimler">
-                <NotificationsIcon color="primary" />
-              </MyButton>
+             
+                <Notifications/>
+          
             </Fragment>
           ) : (
             <Fragment>
